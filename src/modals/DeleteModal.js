@@ -4,10 +4,16 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon, PencilAltIcon } from "@heroicons/react/outline";
 import { connect, useSelector } from "react-redux";
 import { hideAlert } from "../redux/actions/alert.action";
+import { removeData } from "../utils/api";
 
 const DeleteModal = (props) => {
   const cancelButtonRef = useRef(null);
   const alert = useSelector((state) => state.alert);
+
+  const handleDeleteButton = () => {    
+    props.hideAlert();
+    removeData({ path: alert.path });
+  };
 
   return (
     <Transition.Root show={alert.show} as={Fragment}>
@@ -30,8 +36,7 @@ const DeleteModal = (props) => {
         </Transition.Child>
 
         <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            {/* This element is to trick the browser into centering the modal contents. */}
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">            
             <span
               className="hidden sm:inline-block sm:align-middle sm:h-screen"
               aria-hidden="true"
@@ -73,7 +78,9 @@ const DeleteModal = (props) => {
                   <button
                     type="button"
                     className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                    onClick={() => props.hideAlert()}
+                    onClick={() => {
+                      handleDeleteButton();
+                    }}
                   >
                     Delete
                   </button>
@@ -96,7 +103,7 @@ const DeleteModal = (props) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {    
+  return {
     hideAlert: () => dispatch(hideAlert()),
   };
 };

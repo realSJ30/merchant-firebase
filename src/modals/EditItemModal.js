@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationIcon, PencilAltIcon } from "@heroicons/react/outline";
+import { PencilAltIcon } from "@heroicons/react/outline";
 import InputForm from "../components/InputForm";
-import db from "../utils/firebase";
-import { ref, push, set, update } from "firebase/database";
 import { connect, useSelector } from "react-redux";
 import { setActiveCategory } from "../redux/actions/category.action";
+import { updateData } from "../utils/api";
 
 const EditItemModal = (props) => {
   const cancelButtonRef = useRef(null);
@@ -17,33 +16,36 @@ const EditItemModal = (props) => {
     price: 0,
     cost: 0,
     amount_in_stock: 0,
-    options: [],
   });
 
   const handleChangeProduct = (prop) => (event) => {
     setProduct({ ...product, [prop]: event.target.value });
   };
 
-  useEffect(() => {
-    productState.activeId &&
-      setProduct(
-        productState.products.filter(
-          (product) => product.id == productState.activeId
-        )[0]
-      );
-  }, [productState.activeId]);
-
-  const updateItem = (e) => {    
-    e.preventDefault();
-    set(
-      ref(db, `/categories/${activeId}/products/${productState.activeId}`),
-      product
-    ).catch((error) => {
-      console.log(error);
+  const updateItem = (e) => {
+    e.preventDefault();    
+    updateData({
+      data: product,
+      path: `/categories/${activeId}/products/${productState.activeId}`,
     });
     props.setActiveCategory(activeId);
     props.setOpen(false);
   };
+
+  useEffect(() => {
+    if (productState.activeId) {
+      const { name, price, cost, amount_in_stock } =
+        productState.products.filter(
+          (product) => product.id == productState.activeId
+        )[0];
+      setProduct({
+        name: name,
+        price: price,
+        cost: cost,
+        amount_in_stock: amount_in_stock,
+      });
+    }
+  }, [productState.activeId]);
 
   return (
     <Transition.Root show={props.open} as={Fragment}>
@@ -66,8 +68,7 @@ const EditItemModal = (props) => {
         </Transition.Child>
 
         <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            {/* This element is to trick the browser into centering the modal contents. */}
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">            
             <span
               className="hidden sm:inline-block sm:align-middle sm:h-screen"
               aria-hidden="true"
@@ -98,7 +99,7 @@ const EditItemModal = (props) => {
                           as="h3"
                           className="text-lg leading-6 font-medium text-gray-900"
                         >
-                          Update Item
+                          Edit Item
                         </Dialog.Title>
                         <div className="mt-2 w-full">
                           <InputForm
@@ -109,7 +110,7 @@ const EditItemModal = (props) => {
                             onChange={handleChangeProduct("name")}
                             required
                           />
-                          <p>Options</p>
+                          
                           <InputForm
                             value={product.price}
                             type="number"
@@ -143,8 +144,7 @@ const EditItemModal = (props) => {
                   <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <button
                       type="submit"
-                      className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
-                      // onClick={() => props.setOpen(false)}
+                      className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"                      
                     >
                       Save
                     </button>
@@ -169,7 +169,6 @@ const EditItemModal = (props) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    // loadProducts: (id) => dispatch(loadProducts(id)),
     setActiveCategory: (id) => dispatch(setActiveCategory(id)),
   };
 };

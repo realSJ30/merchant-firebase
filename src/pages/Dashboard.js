@@ -10,12 +10,10 @@ const Dashboard = () => {
     <div>
       <NewCategoryModal open={newCategoryModal} setOpen={setNewCategoryModal} />
       <Navbar />
-      <div className="flex md:flex-row flex-col md:items-start w-full">
+      <div className="flex md:flex-row flex-col md:items-start w-full ">
         <Sidebar setNewCategoryModal={setNewCategoryModal}/>
         <ItemList />
       </div>
-
-      {/* <ItemBanner /> */}
     </div>
   );
 };

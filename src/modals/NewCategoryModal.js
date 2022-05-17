@@ -1,10 +1,9 @@
 import React from "react";
 import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationIcon, PencilAltIcon } from "@heroicons/react/outline";
+import { PencilAltIcon } from "@heroicons/react/outline";
 import InputForm from "../components/InputForm";
-import db from "../utils/firebase";
-import { ref, push, set } from "firebase/database";
+import { pushData } from "../utils/api";
 
 const NewCategoryModal = ({ open, setOpen }) => {
   const cancelButtonRef = useRef(null);
@@ -20,11 +19,7 @@ const NewCategoryModal = ({ open, setOpen }) => {
   const createCategory = (e) => {
     console.log(category);
     e.preventDefault();
-    const categoriesRef = ref(db, "categories");
-    const newCategory = push(categoriesRef);
-    set(newCategory, category).catch((err) => {
-      console.log(err);
-    });
+    pushData({ data: category });
     setOpen(false);
   };
 
@@ -49,8 +44,7 @@ const NewCategoryModal = ({ open, setOpen }) => {
         </Transition.Child>
 
         <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            {/* This element is to trick the browser into centering the modal contents. */}
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">            
             <span
               className="hidden sm:inline-block sm:align-middle sm:h-screen"
               aria-hidden="true"
@@ -98,8 +92,7 @@ const NewCategoryModal = ({ open, setOpen }) => {
                   <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <button
                       type="submit"
-                      className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
-                      // onClick={() => createCategory()}
+                      className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"                      
                     >
                       Save
                     </button>

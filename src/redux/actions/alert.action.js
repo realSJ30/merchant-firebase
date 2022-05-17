@@ -1,8 +1,8 @@
 import { AlertConstant } from "../constants/alert.constant";
 
-export const showAlert = () => {
+export const showAlert = (path) => {
   return (dispatch) => {
-    dispatch({ type: AlertConstant.SHOW_ALERT });
+    dispatch({ type: AlertConstant.SHOW_ALERT, payload: path });
   };
 };
 

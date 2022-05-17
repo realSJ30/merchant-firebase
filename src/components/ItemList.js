@@ -1,79 +1,60 @@
-import {
-  CogIcon,
-  DotsVerticalIcon,
-  PencilAltIcon,
-  PlusCircleIcon,
-  PlusIcon,
-  TrashIcon,
-} from "@heroicons/react/outline";
+import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import React, { useEffect, useState } from "react";
 import { connect, useSelector } from "react-redux";
 import DeleteModal from "../modals/DeleteModal";
-import NewCategoryModal from "../modals/NewCategoryModal";
 import NewItemModal from "../modals/NewItemModal";
-import ItemBanner from "./ItemBanner";
 import ItemCard from "./ItemCard";
 import { loadProducts } from "../redux/actions/product.action";
 import EditItemModal from "../modals/EditItemModal";
+import NewOptionModal from "../modals/NewOptionModal";
+import EditOptionModal from "../modals/EditOptionModal";
+import EditCategoryModal from "../modals/EditCategoryModal";
 
 const ItemList = (props) => {
   const [newItemModal, setNewItemModal] = useState(false);
   const [editItemModal, setEditItemModal] = useState(false);
+  const [newOptionModal, setNewOptionModal] = useState(false);
+  const [editOptionModal, setEditOptionModal] = useState(false);
+  const [editCategoryModal, setEditCategoryModal] = useState(false);
   const { categories, activeId } = useSelector((state) => state.category);
   const { products } = useSelector((state) => state.product);
+
   useEffect(() => {
     props.loadProducts(activeId);
   }, [activeId]);
 
-  // const categories = [
-  //   {
-  //     id: 1,
-  //     name: "Shirts",
-  //     products: [
-  //       {
-  //         id: 1,
-  //         name: "Basic Tee",
-  //         href: "#",
-  //         imageSrc:
-  //           "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
-  //         imageAlt: "Front of men's Basic Tee in black.",
-  //         price: "$35",
-  //         cost: "$15",
-  //         options: [
-  //           {
-  //             id: 1,
-  //             name: "Small lorem",
-  //             price: "$35",
-  //             cost: "$15",
-  //           },
-  //           {
-  //             id: 2,
-  //             name: "Medium",
-  //             price: "$55",
-  //             cost: "$25",
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //   },
-  //   // More products...
-  // ];
-
   return (
-    <div className="bg-white w-full">
+    <div className="bg-transparent w-full">
       <DeleteModal />
       <NewItemModal open={newItemModal} setOpen={setNewItemModal} />
       <EditItemModal open={editItemModal} setOpen={setEditItemModal} />
-
+      <NewOptionModal open={newOptionModal} setOpen={setNewOptionModal} />
+      <EditOptionModal open={editOptionModal} setOpen={setEditOptionModal} />
+      <EditCategoryModal
+        open={editCategoryModal}
+        setOpen={setEditCategoryModal}
+      />
       <div className="max-w-2xl mx-auto px-4 py-6 sm:px-6 lg:max-w-7xl lg:px-8 ">
         {categories.map(
           (category, indx) =>
             category.id == activeId && (
               <div key={indx}>
                 <div className="flex space-x-2 items-center justify-between">
-                  <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">
-                    {category.title}
-                  </h2>
+                  <div className="flex items-center space-x-2">
+                    <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">
+                      {category.title}
+                    </h2>
+                    <PencilIcon className="w-5 h-5 text-gray-500 hover:text-black cursor-pointer" />
+                    <TrashIcon
+                      onClick={
+                        () => console.log("delete")
+                        // props.showAlert(
+                        //   `/categories/${activeId}/products/${productState.activeId}/options/${optionState.activeId}`
+                        // )
+                      }
+                      className="w-6 h-6 text-red-400 hover:text-red-500 cursor-pointer"
+                    />
+                  </div>
                   <button
                     onClick={() => setNewItemModal(true)}
                     className="flex items-center space-x-1 rounded-md bg-gray-800 hover:bg-slate-900 text-white px-4 py-1"
@@ -92,6 +73,8 @@ const ItemList = (props) => {
                         key={indx}
                         product={product}
                         setOpen={setEditItemModal}
+                        setNewOptionOpen={setNewOptionModal}
+                        setEditOptionOpen={setEditOptionModal}
                       />
                     ))}
                   </div>
@@ -111,7 +94,6 @@ const ItemList = (props) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     loadProducts: (id) => dispatch(loadProducts(id)),
-    // setActiveCategory: (id) => dispatch(setActiveCategory(id)),
   };
 };
 

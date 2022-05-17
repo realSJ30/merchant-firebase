@@ -7,10 +7,11 @@ import { connect, useSelector } from "react-redux";
 import { setActiveCategory } from "../redux/actions/category.action";
 import { pushData } from "../utils/api";
 
-const NewItemModal = (props) => {
+const NewOptionModal = (props) => {
   const cancelButtonRef = useRef(null);
   const { activeId } = useSelector((state) => state.category);
-  const [product, setProduct] = useState({
+  const productState = useSelector((state) => state.product);
+  const [option, setOption] = useState({
     name: "",
     price: 0,
     cost: 0,
@@ -18,13 +19,16 @@ const NewItemModal = (props) => {
     options: [],
   });
 
-  const handleChangeProduct = (prop) => (event) => {
-    setProduct({ ...product, [prop]: event.target.value });
+  const handleChangeOption = (prop) => (event) => {
+    setOption({ ...option, [prop]: event.target.value });
   };
 
-  const createItem = (e) => {    
+  const createOption = (e) => {    
     e.preventDefault();
-    pushData({ data: product, path: `categories/${activeId}/products` });
+    pushData({
+      data: option,
+      path: `categories/${activeId}/products/${productState.activeId}/options`,
+    });
     props.setActiveCategory(activeId);
     props.setOpen(false);
   };
@@ -67,7 +71,7 @@ const NewItemModal = (props) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <form onSubmit={createItem}>
+                <form onSubmit={createOption}>
                   <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
                       <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
@@ -81,14 +85,14 @@ const NewItemModal = (props) => {
                           as="h3"
                           className="text-lg leading-6 font-medium text-gray-900"
                         >
-                          Create Item
+                          Create Option
                         </Dialog.Title>
                         <div className="mt-2 w-full">
                           <InputForm
                             type="text"
-                            title={"Item name"}
-                            placeholder={"Frappe"}
-                            onChange={handleChangeProduct("name")}
+                            title={"Option name"}
+                            placeholder={"Small, Medium, Large"}
+                            onChange={handleChangeOption("name")}
                             required
                           />                          
                           <InputForm
@@ -97,7 +101,7 @@ const NewItemModal = (props) => {
                             span={"P"}
                             title={"Price"}
                             placeholder={"0.00"}
-                            onChange={handleChangeProduct("price")}
+                            onChange={handleChangeOption("price")}
                           />
                           <InputForm
                             type="number"
@@ -105,14 +109,14 @@ const NewItemModal = (props) => {
                             span={"P"}
                             title={"Cost"}
                             placeholder={"0.00"}
-                            onChange={handleChangeProduct("cost")}
+                            onChange={handleChangeOption("cost")}
                           />
                           <InputForm
                             type="number"
                             step="any"
                             title={"Amount in stock"}
                             placeholder={"0"}
-                            onChange={handleChangeProduct("amount_in_stock")}
+                            onChange={handleChangeOption("amount_in_stock")}
                           />
                         </div>
                       </div>
@@ -145,9 +149,9 @@ const NewItemModal = (props) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {    
+  return {   
     setActiveCategory: (id) => dispatch(setActiveCategory(id)),
   };
 };
 
-export default connect(null, mapDispatchToProps)(NewItemModal);
+export default connect(null, mapDispatchToProps)(NewOptionModal);

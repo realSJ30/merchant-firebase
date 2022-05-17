@@ -1,8 +1,7 @@
 import { ChevronDownIcon, MinusSmIcon } from "@heroicons/react/outline";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { connect, useSelector } from "react-redux";
 import { toggleSidebar } from "../redux/actions/sidebar.action";
-import { ref, onValue } from "firebase/database";
 import {
   loadCategories,
   setActiveCategory,
