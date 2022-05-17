@@ -9,6 +9,7 @@ import EditItemModal from "../modals/EditItemModal";
 import NewOptionModal from "../modals/NewOptionModal";
 import EditOptionModal from "../modals/EditOptionModal";
 import EditCategoryModal from "../modals/EditCategoryModal";
+import { showAlert } from "../redux/actions/alert.action";
 
 const ItemList = (props) => {
   const [newItemModal, setNewItemModal] = useState(false);
@@ -44,13 +45,16 @@ const ItemList = (props) => {
                     <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">
                       {category.title}
                     </h2>
-                    <PencilIcon className="w-5 h-5 text-gray-500 hover:text-black cursor-pointer" />
+                    <PencilIcon
+                      onClick={() => setEditCategoryModal(true)}
+                      className="w-5 h-5 text-gray-500 hover:text-black cursor-pointer"
+                    />
                     <TrashIcon
                       onClick={
-                        () => console.log("delete")
-                        // props.showAlert(
-                        //   `/categories/${activeId}/products/${productState.activeId}/options/${optionState.activeId}`
-                        // )
+                        () => 
+                        props.showAlert(
+                          `/categories/${activeId}`
+                        )
                       }
                       className="w-6 h-6 text-red-400 hover:text-red-500 cursor-pointer"
                     />
@@ -94,6 +98,7 @@ const ItemList = (props) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     loadProducts: (id) => dispatch(loadProducts(id)),
+    showAlert: (path) => dispatch(showAlert(path)),
   };
 };
 

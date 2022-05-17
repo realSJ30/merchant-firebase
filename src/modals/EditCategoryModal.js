@@ -3,10 +3,11 @@ import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PencilAltIcon } from "@heroicons/react/outline";
 import InputForm from "../components/InputForm";
-import { pushData, updateData } from "../utils/api";
-import { useSelector } from "react-redux";
+import { updateData } from "../utils/api";
+import { connect, useSelector } from "react-redux";
+import { setActiveCategory } from "../redux/actions/category.action";
 
-const EditCategoryModal = ({ open, setOpen }) => {
+const EditCategoryModal = (props) => {
   const cancelButtonRef = useRef(null);
   const categoryState = useSelector((state) => state.category);
   const [category, setCategory] = useState({
@@ -17,14 +18,14 @@ const EditCategoryModal = ({ open, setOpen }) => {
     setCategory({ ...category, [prop]: event.target.value });
   };
 
-  const updateCategory = (e) => {
-    console.log(category);
+  const updateCategory = (e) => {    
     e.preventDefault();
     updateData({
       data: category,
       path: `/categories/${categoryState.activeId}`,
     });
-    setOpen(false);
+    props.setActiveCategory(categoryState.activeId);
+    props.setOpen(false);
   };
 
   useEffect(() => {
@@ -37,12 +38,12 @@ const EditCategoryModal = ({ open, setOpen }) => {
   }, [categoryState.activeId]);
 
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={props.open} as={Fragment}>
       <Dialog
         as="div"
         className="relative z-10"
         initialFocus={cancelButtonRef}
-        onClose={setOpen}
+        onClose={props.setOpen}
       >
         <Transition.Child
           as={Fragment}
@@ -113,7 +114,7 @@ const EditCategoryModal = ({ open, setOpen }) => {
                     <button
                       type="button"
                       className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                      onClick={() => setOpen(false)}
+                      onClick={() => props.setOpen(false)}
                       ref={cancelButtonRef}
                     >
                       Cancel
@@ -128,5 +129,10 @@ const EditCategoryModal = ({ open, setOpen }) => {
     </Transition.Root>
   );
 };
+const mapDispatchToProps = (dispatch) => {
+  return {    
+    setActiveCategory: (id) => dispatch(setActiveCategory(id)),    
+  };
+};
 
-export default EditCategoryModal;
+export default connect(null, mapDispatchToProps)(EditCategoryModal);
